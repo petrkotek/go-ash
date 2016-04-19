@@ -1,10 +1,10 @@
 package core
 
 import (
-	"gopkg.in/fatih/set.v0"
 	"reflect"
-)
 
+	"gopkg.in/fatih/set.v0"
+)
 
 type Entity struct {
 	components *set.Set

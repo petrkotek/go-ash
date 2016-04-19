@@ -22,10 +22,10 @@ func NewEntityManager() *EntityManager {
 func (em *EntityManager) AddEntity(entity *Entity, delayed bool) {
 	if delayed {
 		operation := &EntityOperation{Add, entity}
-		em.pendingOperations = append(em.pendingOperations, operation);
+		em.pendingOperations = append(em.pendingOperations, operation)
 		return
 	}
-	em.addEntityInternal(entity);
+	em.addEntityInternal(entity)
 }
 
 func (em *EntityManager) Entities() *set.Set {
@@ -33,11 +33,11 @@ func (em *EntityManager) Entities() *set.Set {
 }
 
 func (em *EntityManager) addEntityInternal(entity *Entity) error {
-	if (em.entitySet.Has(entity)) {
+	if em.entitySet.Has(entity) {
 		return ErrAlreadyRegistered
 	}
 
-	em.entitySet.Add(entity);
+	em.entitySet.Add(entity)
 
 	// TODO: listener.entityAdded(entity);
 	return nil
@@ -47,7 +47,7 @@ type EntityOperationType int
 
 const (
 	Add EntityOperationType = iota
-	Remove
+	// TODO: Remove
 	// TODO: RemoveAll
 )
 

@@ -1,4 +1,5 @@
 package core
+
 /*
 import "gopkg.in/fatih/set.v0"
 

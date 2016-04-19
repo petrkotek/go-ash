@@ -2,6 +2,7 @@ package core
 
 import (
 	"testing"
+
 	"gopkg.in/fatih/set.v0"
 )
 
@@ -28,7 +29,7 @@ func TestEntitiesFor(t *testing.T) {
 			NewFamily(ComponentA{}),
 			[]*Entity{},
 			[]*Entity{},
-		},{
+		}, {
 			NewFamily(ComponentA{}),
 			[]*Entity{entityB},
 			[]*Entity{},
@@ -66,7 +67,7 @@ func TestEntitiesFor(t *testing.T) {
 	}
 }
 
-func entitiesEqual(a, b []*Entity) bool{
+func entitiesEqual(a, b []*Entity) bool {
 	setA := set.New()
 	for _, item := range a {
 		setA.Add(item)
