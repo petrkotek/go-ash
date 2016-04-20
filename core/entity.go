@@ -7,7 +7,9 @@ import (
 )
 
 type Entity struct {
-	components *set.Set
+	components          *set.Set
+	scheduledForRemoval bool
+	removing            bool
 }
 
 func NewEntity() *Entity {

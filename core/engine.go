@@ -26,6 +26,10 @@ func (e *Engine) AddEntity(entity *Entity) {
 	e.entityManager.AddEntity(entity, delayed)
 }
 
+func (e *Engine) RemoveEntity(entity *Entity) {
+	e.entityManager.RemoveEntity(entity, e.updating)
+}
+
 func (e *Engine) EntitiesFor(family *Family) []*Entity {
 	result := []*Entity{}
 	entities := e.entityManager.Entities()
