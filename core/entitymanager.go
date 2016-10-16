@@ -45,6 +45,17 @@ func (em *EntityManager) Entities() *set.Set {
 	return em.entitySet
 }
 
+func (em *EntityManager) ProcessPendingOperations() {
+	for _, pendingOperation := range em.pendingOperations {
+		switch pendingOperation.entityOperationType {
+		case Add:
+			em.addEntityInternal(pendingOperation.entity)
+		case Remove:
+			em.removeEntityInternal(pendingOperation.entity)
+		}
+	}
+}
+
 func (em *EntityManager) addEntityInternal(entity *Entity) error {
 	if em.entitySet.Has(entity) {
 		return ErrAlreadyRegistered

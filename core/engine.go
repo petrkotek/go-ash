@@ -66,6 +66,8 @@ func (e *Engine) Update(deltaTime time.Duration) error {
 		if system.CheckProcessing() {
 			system.Update(float32(deltaTime) / float32(time.Second))
 		}
+
+		e.entityManager.ProcessPendingOperations()
 	}
 
 	e.updating = false
