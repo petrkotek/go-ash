@@ -20,30 +20,6 @@ func (fm *FamilyManager) Notifying() bool {
 	return fm.notifying
 }
 
-func (fm *FamilyManager) AddEntity(entity *Entity) {
-	fm.addEntity(entity, false)
-}
-
-func (fm *FamilyManager) addEntity(entity *Entity, delayed bool) {
-	if delayed {
-		operation := &EntityOperation{Remove, entity}
-		fm.pendingOperations = append(fm.pendingOperations, operation)
-		return
-	} else {
-		fm.addEntityInternal(entity)
-	}
-}
-
-func (fm *FamilyManager) addEntityInternal(entity *Entity) error {
-	if fm.entitySet.Has(entity) {
-		return ErrAlreadyRegistered
-	}
-
-	fm.entitySet.Add(entity)
-
-	return nil
-}
-
 func (fm *FamilyManager) EntitiesFor(family *Family) []*Entity {
 	return fm.registerFamily(family)
 }
@@ -64,10 +40,21 @@ func (fm *FamilyManager) registerFamily(family *Family) []*Entity {
 	return entitiesInFamily
 }
 
-func (fm *FamilyManager) UpdateFamilyMembership(entity *Entity) {
+func (fm *FamilyManager) UpdateFamilyMembership(entity *Entity, added bool) {
 	for family, entities := range fm.immutableFamilies {
 		if family.Matches(entity) {
-			fm.immutableFamilies[family] = append(entities, entity)
+			if added {
+				fm.immutableFamilies[family] = append(entities, entity)
+			} else {
+				slice := fm.immutableFamilies[family]
+				for pos, e := range slice {
+					if e == entity {
+						slice = append(slice[:pos], slice[pos+1:]...)
+						fm.immutableFamilies[family] = slice
+						break
+					}
+				}
+			}
 		}
 	}
 }

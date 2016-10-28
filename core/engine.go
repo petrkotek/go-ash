@@ -85,9 +85,13 @@ func (e *Engine) OnEntityAdded(entity *Entity) {
 }
 
 func (e *Engine) addEntityInternal(entity *Entity) {
-	e.familyManager.UpdateFamilyMembership(entity)
+	e.familyManager.UpdateFamilyMembership(entity, true)
 }
 
 func (e *Engine) OnEntityRemoved(entity *Entity) {
-	// TODO
+	e.removeEntityInternal(entity)
+}
+
+func (e *Engine) removeEntityInternal(entity *Entity) {
+	e.familyManager.UpdateFamilyMembership(entity, false)
 }
