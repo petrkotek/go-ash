@@ -6,23 +6,38 @@ import (
 	"time"
 )
 
+/**
+ * The heart of the Entity framework. It is responsible for keeping track of Entity objects and
+ * managing EntitySystem objects. The Engine should be updated every tick via the Update(float) method.
+ *
+ * With the Engine you can:
+ *
+ * - Add/Remove Entity objects
+ * - Add/Remove EntitySystem objects
+ * - Obtain a list of entities for a specific Family
+ * - Update the main loop
+ * - Register/unregister EntityListener objects
+ */
 type Engine struct {
 	entityManager *EntityManager
 	systemManager *SystemManager
+	familyManager *FamilyManager
 	updating      bool
 }
 
 var ErrUpdating = errors.New("Cannot call Update() on an Engine that is already updating.")
 
 func NewEngine() *Engine {
-	return &Engine{
-		entityManager: NewEntityManager(),
-		systemManager: NewSystemManager(),
-	}
+	engine := &Engine{}
+	entityManager := NewEntityManager(engine)
+	engine.entityManager = entityManager
+	engine.systemManager = NewSystemManager()
+	engine.familyManager = NewFamilyManager(entityManager.Entities())
+	return engine
 }
 
 func (e *Engine) AddEntity(entity *Entity) {
-	delayed := e.updating
+	delayed := e.updating || e.familyManager.Notifying()
 	e.entityManager.AddEntity(entity, delayed)
 }
 
@@ -31,16 +46,7 @@ func (e *Engine) RemoveEntity(entity *Entity) {
 }
 
 func (e *Engine) EntitiesFor(family *Family) []*Entity {
-	result := []*Entity{}
-	entities := e.entityManager.Entities()
-	entities.Each(func(ent interface{}) bool {
-		entity := ent.(*Entity)
-		if family.Matches(entity) {
-			result = append(result, entity)
-		}
-		return true
-	})
-	return result
+	return e.familyManager.EntitiesFor(family)
 }
 
 func (e *Engine) AddSystem(system EntitySystem) {
@@ -72,4 +78,16 @@ func (e *Engine) Update(deltaTime time.Duration) error {
 
 	e.updating = false
 	return nil
+}
+
+func (e *Engine) OnEntityAdded(entity *Entity) {
+	e.addEntityInternal(entity)
+}
+
+func (e *Engine) addEntityInternal(entity *Entity) {
+	e.familyManager.UpdateFamilyMembership(entity)
+}
+
+func (e *Engine) OnEntityRemoved(entity *Entity) {
+	// TODO
 }

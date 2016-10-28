@@ -6,7 +6,7 @@ import (
 	"gopkg.in/fatih/set.v0"
 )
 
-func TestEngine_EntitiesFor(t *testing.T) {
+func TestFamilyManager_EntitiesFor(t *testing.T) {
 	entityA := NewEntity()
 	entityA.Add(ComponentA{})
 	entityB := NewEntity()
@@ -56,27 +56,13 @@ func TestEngine_EntitiesFor(t *testing.T) {
 		},
 	}
 	for i, row := range table {
-		engine := NewEngine()
+		familyManager := NewFamilyManager(set.New())
 		for _, e := range row.entities {
-			engine.AddEntity(e)
+			familyManager.AddEntity(e)
 		}
-		result := engine.EntitiesFor(row.family)
+		result := familyManager.EntitiesFor(row.family)
 		if !entitiesEqual(result, row.expectedResult) {
 			t.Errorf("testcase_%d failed: Expected: %v Got: %v", i, row.expectedResult, result)
 		}
 	}
-}
-
-func entitiesEqual(a, b []*Entity) bool {
-	setA := set.New()
-	for _, item := range a {
-		setA.Add(item)
-	}
-
-	setB := set.New()
-	for _, x := range b {
-		setB.Add(x)
-	}
-
-	return set.SymmetricDifference(setA, setB).IsEmpty()
 }
