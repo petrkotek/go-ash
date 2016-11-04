@@ -23,4 +23,15 @@ func TestComponent(t *testing.T) {
 	if c3 != nil {
 		t.Error()
 	}
+
+	components := entityAB.Components()
+	if size := components.Size(); size != 2 {
+		t.Errorf("Components() expected to get 2 components, got %v components", size)
+	}
+	if !components.Has(componentA) {
+		t.Error("Components() was expected to return componentA, but it didn't")
+	}
+	if !components.Has(componentB) {
+		t.Error("Components() was expected to return componentA, but it didn't")
+	}
 }
