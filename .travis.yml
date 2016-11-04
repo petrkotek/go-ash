@@ -8,7 +8,7 @@ branches:
     - "master"
 
 before_install:
-  - go get ./...
+  - go get -t ./...
   - go get github.com/mattn/goveralls
 
 script:

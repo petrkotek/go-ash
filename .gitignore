@@ -1,0 +1,9 @@
+# Go-related
+*.cov
+
+# temporary/backup files
+*.bak
+
+# IntelliJ
+.idea/
+*.iml
