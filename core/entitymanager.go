@@ -26,13 +26,13 @@ func NewEntityManager(listener EntityListener) *EntityManager {
 	}
 }
 
-func (em *EntityManager) AddEntity(entity *Entity, delayed bool) {
+func (em *EntityManager) AddEntity(entity *Entity, delayed bool) error {
 	if delayed {
 		operation := &EntityOperation{Add, entity}
 		em.pendingOperations = append(em.pendingOperations, operation)
-		return
+		return nil
 	}
-	em.addEntityInternal(entity)
+	return em.addEntityInternal(entity)
 }
 
 func (em *EntityManager) RemoveEntity(entity *Entity, delayed bool) {
@@ -76,6 +76,9 @@ func (em *EntityManager) addEntityInternal(entity *Entity) error {
 }
 
 func (em *EntityManager) removeEntityInternal(entity *Entity) error {
+	if !em.entitySet.Has(entity) {
+		return nil
+	}
 	entity.scheduledForRemoval = false
 	entity.removing = true
 	em.entitySet.Remove(entity)
@@ -98,3 +101,8 @@ type EntityOperation struct {
 	entityOperationType EntityOperationType
 	entity              *Entity
 }
+
+type DummyEntityListener struct{}
+
+func (l *DummyEntityListener) OnEntityAdded(entity *Entity)   {}
+func (l *DummyEntityListener) OnEntityRemoved(entity *Entity) {}
